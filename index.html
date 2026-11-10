@@ -1,1 +1,827 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>JEJAK KHALIFAH: Arena Cendekia Khulafaurrasyidin (PAI Kelas 6 SD)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    h1, h2, h3, .font-title {
+      font-family: 'Baloo 2', cursive;
+    }
+    body {
+      background-image: url('assets/bg-kejayaan-islam.png');
+      background-size: cover;
+      background-position: center bottom;
+      background-attachment: fixed;
+    }
+    .asset-badge {
+      background: #ffffff;
+      border-radius: 9999px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35), inset 0 -6px 0 rgba(0, 0, 0, 0.08);
+      border: 4px solid #FDE68A;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .asset-badge img {
+      width: 92%;
+      height: 92%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .game-card:hover .asset-badge img {
+      transform: scale(1.12) rotate(3deg);
+    }
+    .btn-3d-gold {
+      background: linear-gradient(180deg, #FDE047 0%, #EAB308 100%);
+      box-shadow: 0 6px 0 #A16207, 0 10px 18px rgba(0,0,0,0.3);
+      transition: all 0.12s ease;
+    }
+    .btn-3d-gold:active { transform: translateY(4px); box-shadow: 0 2px 0 #A16207; }
 
+    .btn-3d-emerald {
+      background: linear-gradient(180deg, #34D399 0%, #059669 100%);
+      box-shadow: 0 6px 0 #065F46, 0 10px 18px rgba(0,0,0,0.3);
+      transition: all 0.12s ease;
+    }
+    .btn-3d-emerald:active { transform: translateY(4px); box-shadow: 0 2px 0 #065F46; }
+
+    .btn-3d-royal {
+      background: linear-gradient(180deg, #60A5FA 0%, #2563EB 100%);
+      box-shadow: 0 6px 0 #1E40AF, 0 10px 18px rgba(0,0,0,0.3);
+      transition: all 0.12s ease;
+    }
+    .btn-3d-royal:active { transform: translateY(4px); box-shadow: 0 2px 0 #1E40AF; }
+
+    .card-3d {
+      box-shadow: 0 12px 0 rgba(0,0,0,0.3), 0 20px 30px rgba(0,0,0,0.25);
+      border: 3px solid rgba(253, 230, 138, 0.75);
+    }
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-7px); }
+    }
+    .animate-float { animation: floatSlow 3.2s ease-in-out infinite; }
+
+    @keyframes shakeError {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    .shake { animation: shakeError 0.35s ease-in-out; }
+  </style>
+</head>
+<body class="h-screen w-screen overflow-hidden bg-slate-950 flex flex-col justify-between p-3 md:p-5 relative">
+
+  <!-- CANVAS CONFETTI -->
+  <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+  <!-- ==================== HEADER UTAMA ==================== -->
+  <header class="w-full max-w-7xl mx-auto bg-slate-900/90 backdrop-blur-md rounded-3xl px-4 py-2.5 shadow-2xl border-2 border-amber-400/70 flex items-center justify-between z-20 text-white">
+    <div class="flex items-center gap-3 md:gap-4">
+      <button onclick="speakNatural('Selamat datang di Jejak Khalifah! Arena Cendekia Khulafaur Rasyidin Kelas Enam Sekolah Dasar. Pilih mode tantanganmu!')" 
+              class="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-white p-1 shadow-md border-2 border-amber-400 flex-shrink-0 hover:scale-105 transition">
+        <img src="assets/maskot-cendekia.png" alt="Maskot" class="w-full h-full object-contain mix-blend-multiply" />
+      </button>
+      <div>
+        <div class="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 text-[11px] font-extrabold px-3 py-0.5 rounded-full shadow-sm mb-0.5">
+          <span>PAI KELAS 6 SD • BAB 5: JASA KHULAFAURRASYIDIN UNTUK DUNIA</span>
+        </div>
+        <h1 class="text-xl md:text-2xl font-extrabold text-amber-300 leading-tight tracking-wide">
+          JEJAK KHALIFAH: Arena Cendekia Peradaban
+        </h1>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 md:gap-3">
+      <!-- Tombol Materi Kilat -->
+      <button onclick="openMateriModal()" class="btn-3d-emerald text-white px-3.5 py-2 rounded-2xl flex items-center gap-2 font-extrabold text-xs md:text-sm">
+        <img src="assets/ikon-warisan-dunia.png" class="w-7 h-7 rounded-full bg-white p-0.5 object-contain" />
+        <span class="hidden sm:inline">Materi Kilat</span>
+      </button>
+
+      <!-- Tombol Panel Guru -->
+      <button onclick="openGuruModal()" class="bg-slate-800 hover:bg-slate-700 border-2 border-amber-400/50 text-amber-300 font-extrabold px-3.5 py-2 rounded-2xl text-xs md:text-sm flex items-center gap-1.5">
+        <span>⚙️ Panel Guru</span>
+      </button>
+
+      <!-- Tombol Kembali ke Menu -->
+      <button id="btnBackMenu" onclick="backToMainMenu()" class="hidden bg-rose-600 hover:bg-rose-500 text-white font-extrabold px-4 py-2 rounded-2xl shadow-lg flex items-center gap-1.5 text-sm">
+        <span>🏠 MENU</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== LAYAR MENU UTAMA ==================== -->
+  <main id="menuScreen" class="flex-1 w-full max-w-7xl mx-auto my-3 grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch z-10">
+    
+    <!-- MODE 1: PERISAI KHALIFAH (ARCADE SORTIR CEPAT) -->
+    <div class="game-card card-3d bg-gradient-to-b from-emerald-800/95 to-emerald-950/95 backdrop-blur-md rounded-[2rem] p-5 flex flex-col items-center justify-between text-center relative text-white">
+      <div class="asset-badge w-32 h-32 md:w-40 md:h-40 mt-1 animate-float">
+        <img src="assets/ikon-mode1-perisai.png" alt="Perisai Khalifah" />
+      </div>
+      <div>
+        <span class="bg-emerald-400/20 border border-emerald-300/40 text-emerald-200 text-xs font-extrabold px-4 py-1 rounded-full uppercase">MODE 1 • SORTIR CEPAT</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-amber-300 mt-2">PERISAI KHALIFAH</h2>
+        <p class="text-emerald-100 text-xs md:text-sm mt-1">Pasangkan gelar, kebijakan, dan jasa besar ke Perisai Khalifah yang tepat sebelum waktu habis!</p>
+      </div>
+      <button onclick="startMode1()" class="btn-3d-gold w-full py-3 rounded-2xl text-slate-950 font-extrabold text-lg flex items-center justify-center gap-2">
+        <span>🛡️ MULAI TANTANGAN</span>
+      </button>
+    </div>
+
+    <!-- MODE 2: DUEL CENDEKIA (SPLIT SCREEN 2 SISWA) -->
+    <div class="game-card card-3d bg-gradient-to-b from-blue-900/95 to-indigo-950/95 backdrop-blur-md rounded-[2rem] p-5 flex flex-col items-center justify-between text-center relative text-white">
+      <div class="asset-badge w-32 h-32 md:w-40 md:h-40 mt-1 animate-float" style="animation-delay: 0.4s;">
+        <img src="assets/ikon-mode2-duel.png" alt="Duel Cendekia" />
+      </div>
+      <div>
+        <span class="bg-blue-400/20 border border-blue-300/40 text-blue-200 text-xs font-extrabold px-4 py-1 rounded-full uppercase">MODE 2 • DUEL 2 PEMAIN (IFP)</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-amber-300 mt-2">MENARA PERADABAN</h2>
+        <p class="text-blue-100 text-xs md:text-sm mt-1">Layar terbelah dua! Adu cepat Tim Kufah vs Tim Madinah menyalakan puncak menara ilmu!</p>
+      </div>
+      <button onclick="startMode2()" class="btn-3d-emerald w-full py-3 rounded-2xl text-white font-extrabold text-lg flex items-center justify-center gap-2">
+        <span>⚡ DUEL 2 SISWA</span>
+      </button>
+    </div>
+
+    <!-- MODE 3: EKSPEDISI JEJAK SEJARAH -->
+    <div class="game-card card-3d bg-gradient-to-b from-amber-800/95 to-stone-900/95 backdrop-blur-md rounded-[2rem] p-5 flex flex-col items-center justify-between text-center relative text-white">
+      <div class="asset-badge w-32 h-32 md:w-40 md:h-40 mt-1 animate-float" style="animation-delay: 0.8s;">
+        <img src="assets/ikon-mode3-ekspedisi.png" alt="Ekspedisi Sejarah" />
+      </div>
+      <div>
+        <span class="bg-amber-400/20 border border-amber-300/40 text-amber-200 text-xs font-extrabold px-4 py-1 rounded-full uppercase">MODE 3 • ANALISIS & KRONOLOGI</span>
+        <h2 class="text-2xl md:text-3xl font-extrabold text-amber-300 mt-2">EKSPEDISI SEJARAH</h2>
+        <p class="text-amber-100 text-xs md:text-sm mt-1">Uji pemahaman mendalam tentang sejarah, keteladanan, dan warisan Khulafaurrasyidin bagi dunia!</p>
+      </div>
+      <button onclick="startMode3()" class="btn-3d-royal w-full py-3 rounded-2xl text-white font-extrabold text-lg flex items-center justify-center gap-2">
+        <span>🧭 MULAI EKSPEDISI</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ==================== BAR PROFIL 4 KHALIFAH (BAWAH MENU) ==================== -->
+  <footer id="footerBar" class="w-full max-w-7xl mx-auto bg-slate-900/90 backdrop-blur-md rounded-3xl px-4 py-2 shadow-2xl border-2 border-amber-400/60 flex flex-wrap items-center justify-between gap-2 z-20 text-white">
+    <div class="text-xs font-extrabold text-amber-300 flex items-center gap-1.5">
+      <span>KETUK PERISAI UNTUK PROFIL SINGKAT:</span>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full sm:w-auto">
+      <button onclick="showKhalifahProfile('abubakar')" class="bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-400/60 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-bold transition">
+        <img src="assets/perisai-abubakar.png" class="w-7 h-7 rounded-full bg-white p-0.5 object-contain" />
+        <span>1. Abu Bakar Ash-Shiddiq</span>
+      </button>
+      <button onclick="showKhalifahProfile('umar')" class="bg-amber-900/80 hover:bg-amber-800 border border-amber-400/60 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-bold transition">
+        <img src="assets/perisai-umar.png" class="w-7 h-7 rounded-full bg-white p-0.5 object-contain" />
+        <span>2. Umar bin Khattab</span>
+      </button>
+      <button onclick="showKhalifahProfile('utsman')" class="bg-blue-900/80 hover:bg-blue-800 border border-blue-400/60 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-bold transition">
+        <img src="assets/perisai-utsman.png" class="w-7 h-7 rounded-full bg-white p-0.5 object-contain" />
+        <span>3. Utsman bin Affan</span>
+      </button>
+      <button onclick="showKhalifahProfile('ali')" class="bg-purple-900/80 hover:bg-purple-800 border border-purple-400/60 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-bold transition">
+        <img src="assets/perisai-ali.png" class="w-7 h-7 rounded-full bg-white p-0.5 object-contain" />
+        <span>4. Ali bin Abi Thalib</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- ==================== LAYAR MODE 1: PERISAI KHALIFAH (SORTIR 4 GERBANG) ==================== -->
+  <section id="mode1Screen" class="hidden flex-1 w-full max-w-6xl mx-auto my-2 bg-slate-900/95 backdrop-blur-md rounded-[2.5rem] p-5 border-2 border-amber-400/80 shadow-2xl flex-col justify-between text-white z-10">
+    <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+      <div class="flex items-center gap-3">
+        <span class="bg-emerald-500 text-slate-950 font-extrabold px-4 py-1 rounded-full text-xs md:text-sm">🛡️ MODE 1: PERISAI KHALIFAH</span>
+        <span id="m1Progress" class="text-amber-200 font-bold text-sm">Kartu 1 / 12</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span id="m1Streak" class="bg-amber-500/20 border border-amber-400 text-amber-300 font-extrabold px-3 py-1 rounded-full text-xs">🔥 Kombo: 0</span>
+        <span class="bg-amber-400 text-slate-950 font-extrabold px-4 py-1 rounded-full text-base">⭐ Skor: <span id="m1Score">0</span></span>
+      </div>
+    </div>
+
+    <!-- Kartu Jasa/Kebijakan di Tengah -->
+    <div class="my-auto flex flex-col items-center text-center max-w-3xl mx-auto bg-gradient-to-b from-amber-50 to-amber-100 text-slate-900 p-6 rounded-3xl border-4 border-amber-400 shadow-2xl w-full">
+      <div class="w-20 h-20 rounded-2xl bg-white p-2 border-2 border-amber-300 shadow mb-3 flex items-center justify-center">
+        <img src="assets/ikon-warisan-dunia.png" class="w-full h-full object-contain mix-blend-multiply" />
+      </div>
+      <span class="text-xs font-extrabold uppercase tracking-wider text-amber-800 bg-amber-200 px-3 py-0.5 rounded-full">SIAPAKAH KHALIFAH YANG BERJASA DALAM HAL INI?</span>
+      <h2 id="m1Statement" class="text-xl md:text-3xl font-extrabold mt-2 leading-snug text-slate-900"></h2>
+      <button onclick="speakNatural(document.getElementById('m1Statement').innerText)" class="mt-3 text-xs font-extrabold bg-slate-800 text-amber-300 px-4 py-1.5 rounded-full">
+        🔊 Dengarkan Pernyataan
+      </button>
+    </div>
+
+    <!-- 4 Perisai Pilihan di Bawah -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      <button onclick="answerMode1('Abu Bakar Ash-Shiddiq', this)" class="bg-emerald-900/90 hover:bg-emerald-800 border-2 border-emerald-400 rounded-2xl p-3 flex flex-col items-center text-center transition active:scale-95">
+        <div class="w-20 h-20 rounded-full bg-white p-1.5 border-2 border-amber-300 mb-2">
+          <img src="assets/perisai-abubakar.png" class="w-full h-full object-contain mix-blend-multiply" />
+        </div>
+        <span class="font-extrabold text-sm md:text-base text-amber-300">Abu Bakar Ash-Shiddiq</span>
+        <span class="text-[11px] text-emerald-200">Khalifah ke-1 (11–13 H)</span>
+      </button>
+
+      <button onclick="answerMode1('Umar bin Khattab', this)" class="bg-amber-900/90 hover:bg-amber-800 border-2 border-amber-400 rounded-2xl p-3 flex flex-col items-center text-center transition active:scale-95">
+        <div class="w-20 h-20 rounded-full bg-white p-1.5 border-2 border-amber-300 mb-2">
+          <img src="assets/perisai-umar.png" class="w-full h-full object-contain mix-blend-multiply" />
+        </div>
+        <span class="font-extrabold text-sm md:text-base text-amber-300">Umar bin Khattab</span>
+        <span class="text-[11px] text-amber-200">Khalifah ke-2 (13–23 H)</span>
+      </button>
+
+      <button onclick="answerMode1('Utsman bin Affan', this)" class="bg-blue-900/90 hover:bg-blue-800 border-2 border-blue-400 rounded-2xl p-3 flex flex-col items-center text-center transition active:scale-95">
+        <div class="w-20 h-20 rounded-full bg-white p-1.5 border-2 border-amber-300 mb-2">
+          <img src="assets/perisai-utsman.png" class="w-full h-full object-contain mix-blend-multiply" />
+        </div>
+        <span class="font-extrabold text-sm md:text-base text-amber-300">Utsman bin Affan</span>
+        <span class="text-[11px] text-blue-200">Khalifah ke-3 (23–35 H)</span>
+      </button>
+
+      <button onclick="answerMode1('Ali bin Abi Thalib', this)" class="bg-purple-900/90 hover:bg-purple-800 border-2 border-purple-400 rounded-2xl p-3 flex flex-col items-center text-center transition active:scale-95">
+        <div class="w-20 h-20 rounded-full bg-white p-1.5 border-2 border-amber-300 mb-2">
+          <img src="assets/perisai-ali.png" class="w-full h-full object-contain mix-blend-multiply" />
+        </div>
+        <span class="font-extrabold text-sm md:text-base text-amber-300">Ali bin Abi Thalib</span>
+        <span class="text-[11px] text-purple-200">Khalifah ke-4 (35–40 H)</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ==================== LAYAR MODE 2: DUEL 2 SISWA (MENARA PERADABAN) ==================== -->
+  <section id="mode2Screen" class="hidden flex-1 w-full max-w-7xl mx-auto my-2 grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch z-10 text-white">
+    <!-- TIM KIRI -->
+    <div class="bg-emerald-950/95 rounded-[2rem] p-4 border-2 border-emerald-400 shadow-2xl flex flex-col justify-between text-center">
+      <div>
+        <span class="bg-emerald-500/30 px-3 py-0.5 rounded-full text-xs font-bold">PEMAIN KIRI</span>
+        <h3 class="text-xl font-extrabold text-amber-300 mt-1">🟢 TIM MADINAH</h3>
+        <div class="text-3xl font-extrabold text-white mt-0.5" id="duelScoreLeft">0</div>
+      </div>
+      <div id="duelLeftOptions" class="grid grid-cols-1 gap-2.5 my-auto"></div>
+    </div>
+
+    <!-- TENGAH: MENARA & SOAL -->
+    <div class="bg-slate-900/95 rounded-[2rem] p-4 border-2 border-amber-400 shadow-2xl flex flex-col items-center justify-between text-center">
+      <div class="w-24 h-24 rounded-full bg-white p-1.5 border-4 border-amber-400">
+        <img id="duelCenterImg" src="assets/ikon-mode2-duel.png" class="w-full h-full object-contain mix-blend-multiply" />
+      </div>
+      <div class="bg-amber-50 text-slate-900 p-4 rounded-2xl border-2 border-amber-400 w-full my-2">
+        <span class="text-[10px] font-extrabold uppercase bg-amber-300 px-2.5 py-0.5 rounded-full">SOAL REBUTAN</span>
+        <h2 id="duelQuestionText" class="text-base md:text-lg font-extrabold mt-1.5 leading-snug"></h2>
+      </div>
+      <!-- Progress Bar Tarik Tambang Menara -->
+      <div class="w-full">
+        <div class="flex justify-between text-xs font-extrabold mb-1">
+          <span class="text-emerald-300">Tim Madinah</span>
+          <span class="text-blue-300">Tim Kufah</span>
+        </div>
+        <div class="w-full h-5 bg-blue-600 rounded-full overflow-hidden border-2 border-white flex">
+          <div id="tugBarLeft" class="bg-emerald-500 h-full transition-all duration-300" style="width: 50%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIM KANAN -->
+    <div class="bg-blue-950/95 rounded-[2rem] p-4 border-2 border-blue-400 shadow-2xl flex flex-col justify-between text-center">
+      <div>
+        <span class="bg-blue-500/30 px-3 py-0.5 rounded-full text-xs font-bold">PEMAIN KANAN</span>
+        <h3 class="text-xl font-extrabold text-amber-300 mt-1">🔵 TIM KUFAH</h3>
+        <div class="text-3xl font-extrabold text-white mt-0.5" id="duelScoreRight">0</div>
+      </div>
+      <div id="duelRightOptions" class="grid grid-cols-1 gap-2.5 my-auto"></div>
+    </div>
+  </section>
+
+  <!-- ==================== LAYAR MODE 3: EKSPEDISI SEJARAH ==================== -->
+  <section id="mode3Screen" class="hidden flex-1 w-full max-w-5xl mx-auto my-2 bg-slate-900/95 backdrop-blur-md rounded-[2.5rem] p-5 md:p-7 border-2 border-amber-400 shadow-2xl flex-col justify-between text-white z-10">
+    <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+      <div class="flex items-center gap-3">
+        <span class="bg-blue-500 text-white font-extrabold px-4 py-1 rounded-full text-sm">🧭 EKSPEDISI JEJAK SEJARAH</span>
+        <span id="m3Progress" class="text-slate-300 font-bold text-sm">Pos 1 / 10</span>
+      </div>
+      <div class="bg-amber-400 text-slate-950 font-extrabold px-5 py-1 rounded-full text-lg">
+        ⭐ Skor: <span id="m3Score">0</span>
+      </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row items-center gap-6 my-auto bg-slate-800/90 p-5 rounded-3xl border border-amber-400/40">
+      <div class="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-white p-2 border-4 border-amber-400 flex-shrink-0 flex items-center justify-center">
+        <img id="m3Image" src="assets/ikon-mode3-ekspedisi.png" class="w-full h-full object-contain mix-blend-multiply" />
+      </div>
+      <div class="text-center md:text-left">
+        <button onclick="speakNatural(document.getElementById('m3Question').innerText)" class="bg-amber-400 text-slate-950 text-xs font-extrabold px-3 py-1 rounded-full mb-2">
+          🔊 Dengarkan Soal
+        </button>
+        <h2 id="m3Question" class="text-xl md:text-2xl font-extrabold text-amber-100 leading-snug"></h2>
+      </div>
+    </div>
+
+    <div id="m3OptionsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+  </section>
+
+  <!-- ==================== MODAL UMUM ==================== -->
+  <div id="modalOverlay" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+    <div class="bg-slate-900 text-white rounded-[2rem] max-w-3xl w-full p-6 border-2 border-amber-400 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <button onclick="closeModal()" class="absolute top-4 right-4 bg-rose-600 text-white w-10 h-10 rounded-full font-extrabold text-lg">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    /* =====================================================================
+       1. AUDIO SYNTHESIZER & KAMUS FONETIK SEJARAH ISLAM
+       ===================================================================== */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function playTone(type) {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'correct') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.09);
+        osc.frequency.setValueAtTime(783.99, now + 0.18);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc.start(now);
+        osc.stop(now + 0.45);
+      } else {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.setValueAtTime(165, now + 0.14);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
+    }
+
+    function normalizePhonetics(text) {
+      return text
+        .replace(/r\.a\./gi, 'radhiyallahu anhu')
+        .replace(/saw\./gi, 'salallahu alaihi wasallam')
+        .replace(/Ash-Shiddiq/gi, 'As Sidik')
+        .replace(/Al-Faruq/gi, 'Al Faruk')
+        .replace(/Dzun Nurain/gi, 'Zun Nurain')
+        .replace(/Karramallahu Wajhah/gi, 'Karramallahu Wajhah')
+        .replace(/Babul Ilmi/gi, 'Babul Ilmi')
+        .replace(/Khulafaurrasyidin/gi, 'Khulafaur Rasyidin')
+        .replace(/Al-Qur'an/gi, 'Al Quran');
+    }
+
+    function speakNatural(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(normalizePhonetics(text));
+      utter.lang = 'id-ID';
+      utter.rate = 0.95;
+      utter.pitch = 1.0;
+      window.speechSynthesis.speak(utter);
+    }
+
+    /* =====================================================================
+       2. DATABASE SOAL KELAS 6 BAB 5 (BISA DITAMBAH GURU VIA LOCALSTORAGE)
+       ===================================================================== */
+    const DEFAULT_QUESTIONS = [
+      {
+        statement: 'Mendapat gelar Ash-Shiddiq karena selalu membenarkan perkataan Nabi Muhammad saw., terutama saat peristiwa Isra Mikraj.',
+        khalifah: 'Abu Bakar Ash-Shiddiq',
+        img: 'assets/perisai-abubakar.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Abu Bakar diberi gelar Ash-Shiddiq (Yang Amat Membenarkan).'
+      },
+      {
+        statement: 'Memulai pengumpulan lembaran (suhuf) Al-Qur\'an atas usul Umar bin Khattab karena banyak penghafal Al-Qur\'an gugur di Perang Yamamah.',
+        khalifah: 'Abu Bakar Ash-Shiddiq',
+        img: 'assets/perisai-abubakar.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Pengumpulan Al-Qur\'an tahap pertama dipimpin oleh Zaid bin Tsabit pada masa Abu Bakar.'
+      },
+      {
+        statement: 'Menumpas nabi palsu seperti Musailamah Al-Kazzab dan memerangi kelompok pembangkang zakat dalam Perang Riddah.',
+        khalifah: 'Abu Bakar Ash-Shiddiq',
+        img: 'assets/perisai-abubakar.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Ketegasan Abu Bakar menjaga keutuhan umat Islam pasca wafatnya Rasulullah saw.'
+      },
+      {
+        statement: 'Bergelar Al-Faruq (Pembeda yang hak dan batil) serta menetapkan Kalender Tahun Hijriah yang dimulai dari peristiwa hijrah Nabi.',
+        khalifah: 'Umar bin Khattab',
+        img: 'assets/perisai-umar.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Umar bin Khattab menetapkan penanggalan Hijriah yang masih kita gunakan hingga hari ini.'
+      },
+      {
+        statement: 'Membentuk departemen pemerintahan (Diwan), jawatan pos, kepolisian, peradilan, dan menata Baitul Mal untuk kesejahteraan rakyat.',
+        khalifah: 'Umar bin Khattab',
+        img: 'assets/perisai-umar.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Umar bin Khattab dikenal sebagai pelopor administrasi negara modern dalam Islam.'
+      },
+      {
+        statement: 'Bergelar Dzun Nurain (Pemilik Dua Cahaya) karena menikahi dua putri Rasulullah saw., yaitu Ruqayyah dan Ummu Kultsum.',
+        khalifah: 'Utsman bin Affan',
+        img: 'assets/perisai-utsman.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Kemuliaan akhlak dan kedermawanan Utsman membuatnya digelari Dzun Nurain.'
+      },
+      {
+        statement: 'Membukukan dan menggandakan Mushaf Al-Qur\'an standar (Mushaf Utsmani) untuk menyatukan bacaan umat Islam di berbagai wilayah.',
+        khalifah: 'Utsman bin Affan',
+        img: 'assets/perisai-utsman.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Panitia kodifikasi Mushaf Utsmani diketuai oleh Zaid bin Tsabit.'
+      },
+      {
+        statement: 'Membentuk armada Angkatan Laut Islam pertama di dunia serta memperluas Masjid Nabawi dan Masjidil Haram.',
+        khalifah: 'Utsman bin Affan',
+        img: 'assets/perisai-utsman.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Angkatan laut pertama dibentuk pada masa Utsman atas usul Muawiyah bin Abu Sufyan.'
+      },
+      {
+        statement: 'Bergelar Babul Ilmi (Gerbang Ilmu) dan memelopori penyusunan ilmu tata bahasa Arab (Ilmu Nahwu) bersama Abu Aswad Ad-Duali.',
+        khalifah: 'Ali bin Abi Thalib',
+        img: 'assets/perisai-ali.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Ilmu Nahwu disusun agar umat Islam non-Arab tidak salah dalam membaca Al-Qur\'an.'
+      },
+      {
+        statement: 'Memindahkan pusat ibu kota pemerintahan Islam dari Madinah ke kota Kufah serta menertibkan tanah negara dan kas Baitul Mal.',
+        khalifah: 'Ali bin Abi Thalib',
+        img: 'assets/perisai-ali.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: 'Ali bin Abi Thalib dikenal sangat tegas, adil, dan hidup sederhana.'
+      }
+    ];
+
+    function getQuestions() {
+      const saved = localStorage.getItem('PAI_KELAS6_BAB5_SOAL');
+      return saved ? JSON.parse(saved) : DEFAULT_QUESTIONS;
+    }
+
+    function showScreen(screenId) {
+      ['menuScreen', 'mode1Screen', 'mode2Screen', 'mode3Screen'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.add('hidden');
+        el.classList.remove('flex', 'grid');
+      });
+      const target = document.getElementById(screenId);
+      target.classList.remove('hidden');
+      target.classList.add(screenId === 'menuScreen' || screenId === 'mode2Screen' ? 'grid' : 'flex');
+
+      document.getElementById('btnBackMenu').classList.toggle('hidden', screenId === 'menuScreen');
+      document.getElementById('footerBar').classList.toggle('hidden', screenId !== 'menuScreen');
+    }
+
+    function backToMainMenu() {
+      window.speechSynthesis.cancel();
+      showScreen('menuScreen');
+    }
+
+    /* =====================================================================
+       3. MODE 1: PERISAI KHALIFAH (SORTIR CEPAT)
+       ===================================================================== */
+    let m1Index = 0;
+    let m1Score = 0;
+    let m1Streak = 0;
+
+    function startMode1() {
+      m1Index = 0;
+      m1Score = 0;
+      m1Streak = 0;
+      showScreen('mode1Screen');
+      loadMode1Card();
+    }
+
+    function loadMode1Card() {
+      const bank = getQuestions();
+      const q = bank[m1Index % bank.length];
+      document.getElementById('m1Progress').innerText = `Kartu ${m1Index + 1} / ${bank.length}`;
+      document.getElementById('m1Score').innerText = m1Score;
+      document.getElementById('m1Streak').innerText = `🔥 Kombo: ${m1Streak}`;
+      document.getElementById('m1Statement').innerText = q.statement;
+      speakNatural(q.statement);
+    }
+
+    function answerMode1(chosenKhalifah, btnEl) {
+      const bank = getQuestions();
+      const q = bank[m1Index % bank.length];
+      if (chosenKhalifah === q.khalifah) {
+        playTone('correct');
+        m1Streak++;
+        m1Score += 100 + (m1Streak * 20);
+        fireConfetti();
+        speakNatural(`Tepat sekali! ${q.khalifah}.`);
+        m1Index++;
+        if (m1Index < bank.length) {
+          setTimeout(loadMode1Card, 1100);
+        } else {
+          speakNatural(`Alhamdulillah! Tantangan Perisai Khalifah selesai dengan skor ${m1Score} poin!`);
+          setTimeout(backToMainMenu, 2200);
+        }
+      } else {
+        playTone('wrong');
+        m1Streak = 0;
+        document.getElementById('m1Streak').innerText = `🔥 Kombo: 0`;
+        btnEl.classList.add('shake');
+        speakNatural('Kurang tepat, ayo perhatikan kembali jasa beliau!');
+        setTimeout(() => btnEl.classList.remove('shake'), 400);
+      }
+    }
+
+    /* =====================================================================
+       4. MODE 2: DUEL 2 SISWA (MENARA PERADABAN)
+       ===================================================================== */
+    let duelIdx = 0;
+    let scoreL = 0;
+    let scoreR = 0;
+    let tugPercent = 50;
+
+    function startMode2() {
+      duelIdx = 0;
+      scoreL = 0;
+      scoreR = 0;
+      tugPercent = 50;
+      showScreen('mode2Screen');
+      loadDuelQuestion();
+    }
+
+    function loadDuelQuestion() {
+      const bank = getQuestions();
+      const q = bank[duelIdx % bank.length];
+      document.getElementById('duelScoreLeft').innerText = scoreL;
+      document.getElementById('duelScoreRight').innerText = scoreR;
+      document.getElementById('tugBarLeft').style.width = `${tugPercent}%`;
+      document.getElementById('duelCenterImg').src = q.img;
+      document.getElementById('duelQuestionText').innerText = q.statement;
+
+      const shieldMap = {
+        'Abu Bakar Ash-Shiddiq': 'assets/perisai-abubakar.png',
+        'Umar bin Khattab': 'assets/perisai-umar.png',
+        'Utsman bin Affan': 'assets/perisai-utsman.png',
+        'Ali bin Abi Thalib': 'assets/perisai-ali.png'
+      };
+
+      ['duelLeftOptions', 'duelRightOptions'].forEach((id, side) => {
+        const container = document.getElementById(id);
+        container.innerHTML = '';
+        q.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'bg-slate-800 hover:bg-slate-700 border-2 border-amber-400/50 rounded-2xl p-2.5 flex items-center gap-3 font-extrabold text-sm md:text-base active:scale-95 transition';
+          btn.innerHTML = `
+            <img src="${shieldMap[opt] || 'assets/ikon-mode1-perisai.png'}" class="w-10 h-10 rounded-full bg-white p-0.5 object-contain" />
+            <span>${opt}</span>
+          `;
+          btn.onclick = () => {
+            if (opt === q.khalifah) {
+              playTone('correct');
+              if (side === 0) {
+                scoreL += 100;
+                tugPercent = Math.min(100, tugPercent + 15);
+              } else {
+                scoreR += 100;
+                tugPercent = Math.max(0, tugPercent - 15);
+              }
+              fireConfetti();
+              duelIdx++;
+              setTimeout(loadDuelQuestion, 900);
+            } else {
+              playTone('wrong');
+              btn.classList.add('shake');
+              setTimeout(() => btn.classList.remove('shake'), 400);
+            }
+          };
+          container.appendChild(btn);
+        });
+      });
+    }
+
+    /* =====================================================================
+       5. MODE 3: EKSPEDISI JEJAK SEJARAH
+       ===================================================================== */
+    let m3Idx = 0;
+    let m3Score = 0;
+
+    function startMode3() {
+      m3Idx = 0;
+      m3Score = 0;
+      showScreen('mode3Screen');
+      loadMode3Question();
+    }
+
+    function loadMode3Question() {
+      const bank = getQuestions();
+      const q = bank[m3Idx % bank.length];
+      document.getElementById('m3Progress').innerText = `Pos ${m3Idx + 1} / ${bank.length}`;
+      document.getElementById('m3Score').innerText = m3Score;
+      document.getElementById('m3Image').src = q.img;
+      document.getElementById('m3Question').innerText = q.statement;
+      speakNatural(q.statement);
+
+      const grid = document.getElementById('m3OptionsGrid');
+      grid.innerHTML = '';
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'bg-slate-800 hover:bg-amber-500 hover:text-slate-950 border-2 border-amber-400/60 rounded-2xl p-4 font-extrabold text-lg text-left transition flex items-center justify-between';
+        btn.innerHTML = `<span>${opt}</span><span>➔</span>`;
+        btn.onclick = () => {
+          if (opt === q.khalifah) {
+            playTone('correct');
+            m3Score += 100;
+            fireConfetti();
+            speakNatural(`Benar! ${q.explanation}`);
+            m3Idx++;
+            setTimeout(() => {
+              if (m3Idx < bank.length) loadMode3Question();
+              else backToMainMenu();
+            }, 1500);
+          } else {
+            playTone('wrong');
+            btn.classList.add('shake');
+            setTimeout(() => btn.classList.remove('shake'), 400);
+          }
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    /* =====================================================================
+       6. MODAL PROFIL KHALIFAH, MATERI KILAT, & PANEL GURU
+       ===================================================================== */
+    function showKhalifahProfile(key) {
+      const profiles = {
+        abubakar: {
+          name: '1. Abu Bakar Ash-Shiddiq r.a. (11–13 H / 632–634 M)',
+          img: 'assets/perisai-abubakar.png',
+          gelar: 'Ash-Shiddiq (Yang Amat Membenarkan)',
+          jasa: [
+            'Memerangi nabi palsu (Musailamah Al-Kazzab) & penolak zakat (Perang Riddah).',
+            'Memulai pengumpulan lembaran (suhuf) Al-Qur\'an yang dipimpin Zaid bin Tsabit.',
+            'Memperluas dakwah Islam ke wilayah Irak dan Syam.'
+          ]
+        },
+        umar: {
+          name: '2. Umar bin Khattab r.a. (13–23 H / 634–644 M)',
+          img: 'assets/perisai-umar.png',
+          gelar: 'Al-Faruq (Pembeda Hak & Batil) & Amirul Mukminin',
+          jasa: [
+            'Menetapkan penanggalan Kalender Tahun Hijriah.',
+            'Membentuk Diwan (departemen), jawatan pos, kepolisian, peradilan, dan Baitul Mal.',
+            'Membangun kanal irigasi dan memperluas wilayah hingga Mesir, Syam, dan Persia.'
+          ]
+        },
+        utsman: {
+          name: '3. Utsman bin Affan r.a. (23–35 H / 644–656 M)',
+          img: 'assets/perisai-utsman.png',
+          gelar: 'Dzun Nurain (Pemilik Dua Cahaya)',
+          jasa: [
+            'Membukukan dan menggandakan Mushaf Al-Qur\'an Standar (Mushaf Utsmani).',
+            'Membentuk armada Angkatan Laut Islam pertama di dunia.',
+            'Merenovasi dan memperluas Masjidil Haram dan Masjid Nabawi.'
+          ]
+        },
+        ali: {
+          name: '4. Ali bin Abi Thalib r.a. (35–40 H / 656–661 M)',
+          img: 'assets/perisai-ali.png',
+          gelar: 'Babul Ilmi (Gerbang Ilmu) & Karramallahu Wajhah',
+          jasa: [
+            'Memelopori penyusunan Ilmu Nahwu (tata bahasa Arab) bersama Abu Aswad Ad-Duali.',
+            'Memindahkan pusat pemerintahan dari Madinah ke Kufah.',
+            'Menertibkan administrasi keuangan negara dan tanah hibah untuk kas Baitul Mal.'
+          ]
+        }
+      }[key];
+
+      speakNatural(`${profiles.name}. Gelar beliau adalah ${profiles.gelar}.`);
+      document.getElementById('modalContent').innerHTML = `
+        <div class="flex flex-col sm:flex-row items-center gap-5">
+          <div class="w-32 h-32 rounded-3xl bg-white p-2 border-4 border-amber-400 flex-shrink-0">
+            <img src="${profiles.img}" class="w-full h-full object-contain mix-blend-multiply" />
+          </div>
+          <div class="text-left">
+            <span class="bg-amber-400 text-slate-950 text-xs font-extrabold px-3 py-1 rounded-full">${profiles.gelar}</span>
+            <h2 class="text-2xl font-extrabold text-amber-300 mt-2">${profiles.name}</h2>
+            <ul class="list-disc list-inside text-sm md:text-base text-slate-200 mt-3 space-y-1.5">
+              ${profiles.jasa.map(j => `<li>${j}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+      document.getElementById('modalOverlay').classList.remove('hidden');
+    }
+
+    function openMateriModal() {
+      document.getElementById('modalContent').innerHTML = `
+        <h2 class="text-2xl font-extrabold text-amber-300 mb-3">📚 Peta Konsep: Jasa Khulafaurrasyidin untuk Dunia</h2>
+        <p class="text-sm text-slate-300 mb-4">Khulafaurrasyidin berarti para pemimpin yang mendapat petunjuk. Ketuk salah satu kartu di bawah menu utama untuk mendengarkan penjelasan lengkapnya.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left text-xs md:text-sm">
+          <div class="bg-emerald-950 p-3.5 rounded-2xl border border-emerald-400">
+            <b class="text-amber-300">1. Abu Bakar Ash-Shiddiq (632–634 M):</b> Tegas menjaga akidah, mengumpulkan suhuf Al-Qur'an.
+          </div>
+          <div class="bg-amber-950 p-3.5 rounded-2xl border border-amber-400">
+            <b class="text-amber-300">2. Umar bin Khattab (634–644 M):</b> Kalender Hijriah, Baitul Mal, peradilan & pos negara.
+          </div>
+          <div class="bg-blue-950 p-3.5 rounded-2xl border border-blue-400">
+            <b class="text-amber-300">3. Utsman bin Affan (644–656 M):</b> Mushaf Utsmani standar, Angkatan Laut pertama.
+          </div>
+          <div class="bg-purple-950 p-3.5 rounded-2xl border border-purple-400">
+            <b class="text-amber-300">4. Ali bin Abi Thalib (656–661 M):</b> Ilmu Nahwu (Tata Bahasa Arab), penertiban kas negara.
+          </div>
+        </div>
+      `;
+      document.getElementById('modalOverlay').classList.remove('hidden');
+    }
+
+    function openGuruModal() {
+      document.getElementById('modalContent').innerHTML = `
+        <h2 class="text-2xl font-extrabold text-amber-300 mb-2">⚙️ Panel Guru: Tambah Soal Baru</h2>
+        <div class="space-y-3 text-left text-sm">
+          <div>
+            <label class="block font-bold mb-1">Pernyataan Jasa / Gelar / Kebijakan:</label>
+            <input id="newStmt" type="text" placeholder="Contoh: Menetapkan Kalender Hijriah..." class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-600 text-white" />
+          </div>
+          <div>
+            <label class="block font-bold mb-1">Jawaban Khalifah yang Tepat:</label>
+            <select id="newKhalifah" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-600 text-white">
+              <option value="Abu Bakar Ash-Shiddiq">Abu Bakar Ash-Shiddiq</option>
+              <option value="Umar bin Khattab">Umar bin Khattab</option>
+              <option value="Utsman bin Affan">Utsman bin Affan</option>
+              <option value="Ali bin Abi Thalib">Ali bin Abi Thalib</option>
+            </select>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button onclick="saveNewQuestion()" class="btn-3d-gold text-slate-950 font-extrabold px-5 py-2.5 rounded-xl">💾 Simpan Soal</button>
+            <button onclick="localStorage.removeItem('PAI_KELAS6_BAB5_SOAL'); closeModal();" class="bg-rose-700 px-4 py-2.5 rounded-xl font-bold">Reset ke Default</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('modalOverlay').classList.remove('hidden');
+    }
+
+    function saveNewQuestion() {
+      const stmt = document.getElementById('newStmt').value.trim();
+      const khalifah = document.getElementById('newKhalifah').value;
+      if (!stmt) return;
+      const bank = getQuestions();
+      bank.push({
+        statement: stmt,
+        khalifah,
+        img: 'assets/ikon-warisan-dunia.png',
+        options: ['Abu Bakar Ash-Shiddiq', 'Umar bin Khattab', 'Utsman bin Affan', 'Ali bin Abi Thalib'],
+        explanation: `Jasa dari Khalifah ${khalifah}.`
+      });
+      localStorage.setItem('PAI_KELAS6_BAB5_SOAL', JSON.stringify(bank));
+      closeModal();
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.add('hidden');
+    }
+
+    function fireConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const pieces = Array.from({ length: 45 }, () => ({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        vx: (Math.random() - 0.5) * 14,
+        vy: (Math.random() - 0.8) * 14,
+        size: Math.random() * 10 + 6,
+        color: ['#FDE047', '#34D399', '#60A5FA', '#F472B6'][Math.floor(Math.random() * 4)]
+      }));
+      let frame = 0;
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
+        if (++frame < 45) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+  </script>
+</body>
+</html>
